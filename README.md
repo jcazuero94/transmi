@@ -5,7 +5,11 @@ To setup the project first creade conda enviroment and activate it<br>
 `conda create -n transmilenio python==3.8`<br>
 `conda activate transmilenio`<br>
 Then install kedro and its dependencies<br>
+`pip install kedro==0.17.7`<br>
 `pip install 'kedro[all]'`<br>
+`kedro build-reqs`<br>
+`kedro install`
+
 ## Project dependencies
 
 To generate or update the dependency requirements for your project:
