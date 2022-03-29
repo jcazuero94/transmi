@@ -1,0 +1,7 @@
+validaciones_troncal_log_int:
+  type: json.JSONDataSet
+  filepath: data/01_raw/validaciones_troncal_log.json
+
+dic_estacion_linea_int:
+  type: json.JSONDataSet
+  filepath: data/01_raw/dic_estacion_linea.json
