@@ -53,6 +53,7 @@ def extraction_validaciones_troncal(
         data_str_io = StringIO(response.text)
         print("Pandas")
         response_pd = pd.read_csv(data_str_io, sep=",")
+        del response, data_str_io
         dic_estacion_linea_response = (
             response_pd[["Estacion_Parada", "Linea"]]
             .drop_duplicates()

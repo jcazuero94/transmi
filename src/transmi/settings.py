@@ -1,8 +1,10 @@
 """Project settings."""
 from transmi.hooks import ProjectHooks
+from transmi.context import CustomContext
 
 # Instantiate and list your project hooks here
 HOOKS = (ProjectHooks(),)
+CONTEXT_CLASS = CustomContext
 
 # List the installed plugins for which to disable auto-registry
 # DISABLE_HOOKS_FOR_PLUGINS = ("kedro-viz",)
