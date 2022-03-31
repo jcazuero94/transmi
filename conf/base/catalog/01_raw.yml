@@ -4,7 +4,7 @@ validaciones_troncal:
   filepath: data/01_raw/validaciones_troncal
   save_args:
     mode: append
-    partitionBy: day
+    partitionBy: [day,Estacion_Parada]
 
 validaciones_troncal_log_raw:
   type: json.JSONDataSet

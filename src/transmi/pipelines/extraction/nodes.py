@@ -79,22 +79,35 @@ def extraction_validaciones_troncal(
             axis=1,
             inplace=True,
         )
+
+        def _process_date(date):
+            try:
+                return date.astimezone(tz="America/Bogota")
+            except TypeError:
+                return date
+
         response_pd["Fecha_Transaccion"] = pd.to_datetime(
-            response_pd["Fecha_Transaccion"], format="%Y-%m-%d %H:%M:%S UTC", utc=True
-        ).apply(lambda x: x.astimezone(tz="America/Bogota"))
-        response_pd["day"] = response_pd["Fecha_Transaccion"].apply(lambda x: x.date)
+            response_pd["Fecha_Transaccion"]
+        ).apply(_process_date)
+        response_pd["day"] = response_pd["Fecha_Transaccion"].apply(lambda x: x.date())
+        response_pd["hour"] = response_pd["Fecha_Transaccion"].apply(lambda x: x.hour)
+        response_pd["minute"] = response_pd["Fecha_Transaccion"].apply(
+            lambda x: x.minute
+        )
+        response_pd.drop("Fecha_Transaccion", axis=1, inplace=True)
         try:
             assert list(response_pd.columns) == [
                 "Acceso_Estacion",
                 "Emisor",
                 "Estacion_Parada",
-                "Fecha_Transaccion",
                 "Nombre_Perfil",
                 "Numero_Tarjeta",
                 "Saldo_Previo_a_Transaccion",
                 "Tipo_Tarjeta",
                 "Valor",
                 "day",
+                "hour",
+                "minute",
             ], "Database inconsistency"
         except AssertionError:
             print("Database inconsistency")
