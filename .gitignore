@@ -15,6 +15,7 @@ logs/**
 
 # except their sub-folders
 !data/**/
+!data/01_raw/links_data_transmi.csv
 !logs/**/
 
 # also keep all .gitkeep files
