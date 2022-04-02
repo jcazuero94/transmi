@@ -1,6 +1,7 @@
 from kedro.pipeline import Pipeline, node
 from transmi.pipelines.extraction.nodes import (
     extraction_validaciones_troncal,
+    extraction_summary_validaciones_troncal,
 )
 
 
@@ -20,8 +21,17 @@ def create_pipeline(**kwargs):
                     "validaciones_troncal_log_int",
                     "dic_estacion_linea_int",
                 ],
-                name=f"extraction_validaciones_troncal",
-                tags=["extraccion"],
-            )
+                name="extraction_validaciones_troncal",
+                tags=["extraction"],
+            ),
+            node(
+                func=extraction_summary_validaciones_troncal,
+                inputs=[
+                    "links_data_transmi",
+                ],
+                outputs="validaciones_troncal_summary@pandas",
+                name="extraction_summary_validaciones_troncal",
+                tags=["extraction"],
+            ),
         ]
     )

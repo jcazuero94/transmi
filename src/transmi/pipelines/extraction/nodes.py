@@ -51,9 +51,10 @@ def extraction_validaciones_troncal(
     # Succesfull request
     if response.status_code == 200:
         data_str_io = StringIO(response.text)
+        del response
         print("Pandas")
         response_pd = pd.read_csv(data_str_io, sep=",")
-        del response, data_str_io
+        del data_str_io
         dic_estacion_linea_response = (
             response_pd[["Estacion_Parada", "Linea"]]
             .drop_duplicates()
@@ -137,3 +138,50 @@ def extraction_validaciones_troncal(
             validaciones_troncal_log,
             dic_estacion_linea,
         )
+
+
+def extraction_summary_validaciones_troncal(links_data_transmi: pd.DataFrame):
+    """Node that download and process summary of troncal validaciones every 15 minutes"""
+    result = None
+    # Iterate over each link or month to extract from the csv in 01_raw
+    for row in links_data_transmi.iterrows():
+        link = row[1]["Link"]
+        link_type = row[1]["Type"]
+        link = link.replace(" ", "%20")
+        if link_type == 1:
+            print(link)
+            excel = pd.read_excel(
+                BASE_VALIDACIONES_REQUEST + "ValidacionTroncal/" + link
+            )
+            for i in range(8):
+                for j in range(5):
+                    if excel.iloc[i, j] == "Fase":
+                        start_coord = i, j
+                        break
+            cols = excel.iloc[start_coord[0], start_coord[1] :].values
+            cols = [
+                c.date() if type(c) == datetime.datetime else c.strip() for c in cols
+            ]
+            excel = excel.iloc[start_coord[0] + 1 :, start_coord[1] :].copy()
+            excel.columns = cols
+            excel = excel[excel["Fase"] != "Total general"].copy()
+            excel.drop(["Total general", "Fase"], axis=1, inplace=True)
+            excel.dropna(how="all", inplace=True)
+            excel.dropna(how="all", axis=1, inplace=True)
+            excel_summary = (
+                excel.drop(["Línea", "Acceso de Estación"], axis=1)
+                .groupby(["Estación", "Intervalo"])
+                .sum()
+            )
+            excel_summary = excel_summary.reset_index().melt(
+                id_vars=["Estación", "Intervalo"], var_name="date", value_name="demand"
+            )
+            result = pd.concat([result, excel_summary], ignore_index=True)
+
+    result["Intervalo"] = result["Intervalo"].apply(
+        lambda x: datetime.time(int(x.split(":")[0]), int(x.split(":")[1]))
+        if type(x) == str
+        else x
+    )
+
+    return result

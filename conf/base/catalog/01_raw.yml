@@ -13,3 +13,15 @@ validaciones_troncal_log_raw:
 dic_estacion_linea_raw:
   type: json.JSONDataSet
   filepath: data/01_raw/dic_estacion_linea.json
+
+validaciones_troncal_zip_log_raw:
+  type: json.JSONDataSet
+  filepath: data/01_raw/validaciones_troncal_zip_log.json
+
+links_data_transmi:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/links_data_transmi.csv
+
+validaciones_troncal_summary@pandas:
+  type: pandas.ParquetDataSet
+  filepath: data/01_raw/validaciones_troncal_summary
