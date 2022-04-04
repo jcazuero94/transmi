@@ -5,6 +5,7 @@ from io import StringIO
 import datetime
 from typing import Dict, Union
 from transmi.pipelines.extraction.utilities import _prepare_output_extraction_troncal
+from itertools import product
 
 BASE_VALIDACIONES_REQUEST = "https://storage.googleapis.com/validaciones_tmsa/"
 
@@ -144,23 +145,36 @@ def extraction_summary_validaciones_troncal(links_data_transmi: pd.DataFrame):
     """Node that download and process summary of troncal validaciones every 15 minutes"""
     result = None
     # Iterate over each link or month to extract from the csv in 01_raw
+    sheet_names_list = [
+        "Validaciones Consolidado",
+        "VALIDACIONES CONSOLIDADO",
+        "VALIDACIONES TULLAVE",
+        "Validaciones Tullave",
+    ]
     for row in links_data_transmi.iterrows():
         link = row[1]["Link"]
         link_type = row[1]["Type"]
         link = link.replace(" ", "%20")
         if link_type == 1:
             print(link)
-            excel = pd.read_excel(
-                BASE_VALIDACIONES_REQUEST + "ValidacionTroncal/" + link
-            )
-            for i in range(8):
-                for j in range(5):
-                    if excel.iloc[i, j] == "Fase":
-                        start_coord = i, j
-                        break
+            xl = pd.ExcelFile(BASE_VALIDACIONES_REQUEST + "ValidacionTroncal/" + link)
+            visible_sheets = [
+                sh.title for sh in xl.book.worksheets if sh.sheet_state == "visible"
+            ]
+            sheet = visible_sheets[0]
+            for sh in sheet_names_list:
+                if sh in visible_sheets:
+                    sheet = sh
+                    break
+            excel = xl.parse(sheet)
+            for i, j in product(range(8), range(8)):
+                if str(excel.iloc[i, j]).strip() == "Fase":
+                    start_coord = i, j
+                    break
             cols = excel.iloc[start_coord[0], start_coord[1] :].values
             cols = [
-                c.date() if type(c) == datetime.datetime else c.strip() for c in cols
+                c.date() if type(c) == datetime.datetime else str(c).strip()
+                for c in cols
             ]
             excel = excel.iloc[start_coord[0] + 1 :, start_coord[1] :].copy()
             excel.columns = cols
