@@ -168,7 +168,7 @@ def extraction_summary_validaciones_troncal(links_data_transmi: pd.DataFrame):
                     break
             excel = xl.parse(sheet)
             for i, j in product(range(8), range(8)):
-                if str(excel.iloc[i, j]).strip() == "Fase":
+                if str(excel.iloc[i, j]).strip() in ["Fase", "Fase 3"]:
                     start_coord = i, j
                     break
             cols = excel.iloc[start_coord[0], start_coord[1] :].values
@@ -178,6 +178,7 @@ def extraction_summary_validaciones_troncal(links_data_transmi: pd.DataFrame):
             ]
             excel = excel.iloc[start_coord[0] + 1 :, start_coord[1] :].copy()
             excel.columns = cols
+            excel.rename({"Fase 3": "Fase"}, axis=1, inplace=True)
             excel = excel[excel["Fase"] != "Total general"].copy()
             excel.drop(["Total general", "Fase"], axis=1, inplace=True)
             excel.dropna(how="all", inplace=True)
