@@ -9,3 +9,7 @@ dic_estacion_linea_int:
 validaciones_troncal_zip_log_int:
   type: json.JSONDataSet
   filepath: data/01_raw/validaciones_troncal_zip_log.json
+
+validaciones_troncal_summary@pandas:
+  type: pandas.ParquetDataSet
+  filepath: data/02_raw/validaciones_troncal_summary

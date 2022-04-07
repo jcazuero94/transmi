@@ -21,7 +21,3 @@ validaciones_troncal_zip_log_raw:
 links_data_transmi:
   type: pandas.CSVDataSet
   filepath: data/01_raw/links_data_transmi.csv
-
-validaciones_troncal_summary@pandas:
-  type: pandas.ParquetDataSet
-  filepath: data/01_raw/validaciones_troncal_summary

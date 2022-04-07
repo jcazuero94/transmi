@@ -157,6 +157,7 @@ def extraction_summary_validaciones_troncal(links_data_transmi: pd.DataFrame):
         link = link.replace(" ", "%20")
         if link_type == 1:
             print(link)
+            print(str(datetime.datetime.today()))
             xl = pd.ExcelFile(BASE_VALIDACIONES_REQUEST + "ValidacionTroncal/" + link)
             visible_sheets = [
                 sh.title for sh in xl.book.worksheets if sh.sheet_state == "visible"
