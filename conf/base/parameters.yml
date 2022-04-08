@@ -1,2 +1,6 @@
 start_validaciones_troncal: 2020-01-01
 extraction_day: next
+quarantines:
+  - 2020-03-20
+  - 2021-01-15
+  - 2021-04-29

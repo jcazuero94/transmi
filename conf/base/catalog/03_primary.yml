@@ -1,0 +1,3 @@
+validaciones_troncal_summary_clean@pandas:
+  type: pandas.ParquetDataSet
+  filepath: data/03_primary/validaciones_troncal_summary_clean

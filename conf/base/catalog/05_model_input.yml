@@ -1,0 +1,3 @@
+system_hourly_demand@pandas:
+  type: pandas.ParquetDataSet
+  filepath: data/05_model_input/system_hourly_demand
