@@ -161,3 +161,6 @@ venv.bak/
 
 # Executables
 run_extraction.sh
+
+# Images
+*.png

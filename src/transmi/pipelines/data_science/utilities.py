@@ -22,7 +22,8 @@ def _chgs_from_base(chgs_base: List, start_chgs, end_chgs):
         start_period = chgs_base_comp[i]
         end_period = chgs_base_comp[i + 1]
         dist_periods = (end_period - start_period).days
-        num_chgs = int(dist_periods / 365)
+        per_chg = 365 if start_period < pd.Timestamp(2021, 4, 1) else 180
+        num_chgs = int(dist_periods / per_chg)
         chgs_res += [
             start_period
             + pd.Timedelta(unit="D", value=j * int(dist_periods / (num_chgs + 1)))
