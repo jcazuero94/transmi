@@ -1,0 +1,8 @@
+fig_components_system:
+  type: kedro.extras.datasets.matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/fig_components_system.png
+
+fig_forecast_system:
+  type: kedro.extras.datasets.matplotlib.MatplotlibWriter
+  filepath: data/07_model_output/fig_forecast_system.png
+

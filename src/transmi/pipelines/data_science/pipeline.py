@@ -9,8 +9,16 @@ def create_pipeline(**kwargs):
         [
             node(
                 func=system_model_fit,
-                inputs=["system_hourly_demand", "params:quarantines"],
-                outputs=[],
+                inputs=[
+                    "system_hourly_demand@pandas",
+                    "params:quarantines",
+                    "params:n_cv",
+                ],
+                outputs=[
+                    "forecast_system",
+                    "fig_components_system",
+                    "fig_forecast_system",
+                ],
                 name="system_model_fit",
                 tags=["data_science"],
             ),
