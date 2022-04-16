@@ -1,0 +1,11 @@
+dayly_seasonalities_system:
+  type: pandas.ParquetDataSet
+  filepath: data/08_reporting/dayly_seasonalities_system
+
+weekly_seasonality:
+  type: pandas.ParquetDataSet
+  filepath: data/08_reporting/weekly_seasonality
+
+yearly_seasonality:
+  type: pandas.ParquetDataSet
+  filepath: data/08_reporting/yearly_seasonality

@@ -1,3 +1,4 @@
+import sys
 from typing import List
 import pandas as pd
 import numpy as np
@@ -116,4 +117,12 @@ def system_model_fit(
         color="orange",
     )
     fig_forecast.set_size_inches(400, 8)
+    forecast = pd.merge(
+        forecast,
+        system_hourly_demand[["ds", "y", "weekday", "sunday", "saturday", "holiday"]],
+        how="left",
+        on="ds",
+        suffixes=["", "_mark"],
+    )
+    print(forecast.columns)
     return forecast, fig_components, fig_forecast
