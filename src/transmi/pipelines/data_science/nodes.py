@@ -124,5 +124,4 @@ def system_model_fit(
         on="ds",
         suffixes=["", "_mark"],
     )
-    print(forecast.columns)
-    return forecast, fig_components, fig_forecast
+    return forecast, fig_components, fig_forecast, holidays_df

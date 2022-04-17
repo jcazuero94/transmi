@@ -18,6 +18,7 @@ def create_pipeline(**kwargs):
                     "forecast_system",
                     "fig_components_system",
                     "fig_forecast_system",
+                    "holidays_df",
                 ],
                 name="system_model_fit",
                 tags=["data_science"],

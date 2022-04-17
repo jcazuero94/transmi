@@ -2,10 +2,14 @@ dayly_seasonalities_system:
   type: pandas.ParquetDataSet
   filepath: data/08_reporting/dayly_seasonalities_system
 
-weekly_seasonality:
+weekly_seasonality_system:
   type: pandas.ParquetDataSet
-  filepath: data/08_reporting/weekly_seasonality
+  filepath: data/08_reporting/weekly_seasonality_system
 
-yearly_seasonality:
+yearly_seasonality_system:
   type: pandas.ParquetDataSet
-  filepath: data/08_reporting/yearly_seasonality
+  filepath: data/08_reporting/yearly_seasonality_system
+
+holidays_ser:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/holidays_ser.json

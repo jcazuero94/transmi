@@ -6,3 +6,6 @@ fig_forecast_system:
   type: kedro.extras.datasets.matplotlib.MatplotlibWriter
   filepath: data/07_model_output/fig_forecast_system.png
 
+holidays_df:
+  type: pandas.ParquetDataSet
+  filepath: data/07_model_output/holidays_df

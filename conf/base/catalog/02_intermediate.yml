@@ -12,4 +12,4 @@ validaciones_troncal_zip_log_int:
 
 validaciones_troncal_summary@pandas:
   type: pandas.ParquetDataSet
-  filepath: data/02_raw/validaciones_troncal_summary
+  filepath: data/02_intermediate/validaciones_troncal_summary

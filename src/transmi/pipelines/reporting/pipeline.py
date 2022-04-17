@@ -9,13 +9,12 @@ def create_pipeline(**kwargs):
         [
             node(
                 func=prepare_hourly_system_model_app,
-                inputs=[
-                    "forecast_system",
-                ],
+                inputs=["forecast_system", "holidays_df"],
                 outputs=[
                     "dayly_seasonalities_system",
-                    "weekly_seasonality",
-                    "yearly_seasonality",
+                    "weekly_seasonality_system",
+                    "yearly_seasonality_system",
+                    "holidays_ser",
                 ],
                 name="prepare_hourly_system_model_app",
                 tags=["app_dash"],
