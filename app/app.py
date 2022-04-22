@@ -21,6 +21,7 @@ SEASONALITIES = [
     "Weekly seasonality",
     "Dayly seasonalities",
     "Holidays",
+    "Schoolday",
 ]
 LAYOUT_GRAPHS = {
     "paper_bgcolor": "rgba(255,255,255,100)",
@@ -290,9 +291,11 @@ def make_main_figure(station, checklist, date_range, demand_aggregation):
     if "Weekly seasonality" in checklist:
         cols_prediction += ["weekly"]
     if "Dayly seasonalities" in checklist:
-        cols_prediction += ["weekday", "saturday", "sunday", "holiday"]
+        cols_prediction += ["weekday", "saturday", "sunday", "holiday", "schoolday"]
     if "Holidays" in checklist:
         cols_prediction += ["holidays"]
+    if "Schoolday" in checklist:
+        cols_prediction += ["schoolday_reg"]
     forecast_df["yhat"] = 1
     for c in cols_prediction:
         forecast_df["yhat"] = forecast_df["yhat"] + forecast_df[c]

@@ -7,7 +7,7 @@ import holidays
 import fbprophet as prophet
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
-from transmi.pipelines.data_science.utilities import _chgs_from_base
+from transmi.pipelines.data_science.utilities import _chgs_from_base, _get_school_recess
 from transmi.extras.supress_stdout_stderr import SuppressStdoutStderr
 
 
@@ -21,8 +21,53 @@ def system_model_fit(
     holidays_df = pd.DataFrame(
         holidays.Colombia(years=list(range(2015, 2025))).items()
     ).rename({0: "ds", 1: "holiday"}, axis=1)
+    holidays_df = pd.concat(
+        [
+            holidays_df,
+            pd.DataFrame(
+                [
+                    [x + pd.Timedelta(unit="D", value=1), "Holy saturday"]
+                    for x in holidays_df[
+                        holidays_df["holiday"] == "Viernes Santo [Good Friday]"
+                    ]["ds"]
+                ],
+                columns=holidays_df.columns,
+            ),
+        ],
+        ignore_index=True,
+    )
     start_date = system_hourly_demand["ds"].min()
     end_date = system_hourly_demand["ds"].max()
+    school_recess_periods = [
+        ("2019-01-01", "2019-01-19"),
+        ("2019-04-15", "2019-04-17"),
+        ("2019-06-17", "2019-06-28"),
+        ("2019-11-25", "2020-01-26"),
+        ("2020-03-20", "2021-06-08"),
+        ("2021-06-21", "2021-07-04"),
+        ("2021-11-29", "2022-01-23"),
+        ("2022-04-11", "2022-04-15"),
+        ("2022-06-20", "2022-07-10"),
+        ("2022-11-18", "2022-12-31"),
+    ]
+    school_recess_periods = [
+        (pd.Timestamp(x), pd.Timestamp(y)) for x, y in school_recess_periods
+    ]
+    school_recess_periods += _get_school_recess(2017)
+    school_recess_periods += _get_school_recess(2018)
+    school_recess_days = []
+    for st, en in school_recess_periods:
+        school_recess_days += list(pd.date_range(st, en))
+    system_hourly_demand["schoolday"] = (
+        ~system_hourly_demand["ds"].apply(
+            lambda x: pd.Timestamp(x.date()) in school_recess_days
+        )
+        & system_hourly_demand["weekday"]
+    )
+    system_hourly_demand["schoolday_reg"] = system_hourly_demand["schoolday"]
+    system_hourly_demand["weekday"] = (
+        system_hourly_demand["weekday"] & ~system_hourly_demand["schoolday"]
+    )
     train_demand = system_hourly_demand[
         (system_hourly_demand["ds"] > start_date + pd.Timedelta(days=200))
         & (system_hourly_demand["ds"] < end_date - pd.Timedelta(days=60))
@@ -57,6 +102,12 @@ def system_model_fit(
             name="weekday", period=1, fourier_order=9, condition_name="weekday"
         )
         model.add_seasonality(
+            name="schoolday",
+            period=1,
+            fourier_order=9,
+            condition_name="schoolday",
+        )
+        model.add_seasonality(
             name="sunday", period=1, fourier_order=7, condition_name="sunday"
         )
         model.add_seasonality(
@@ -65,6 +116,7 @@ def system_model_fit(
         model.add_seasonality(
             name="holiday", period=1, fourier_order=7, condition_name="holiday"
         )
+        model.add_regressor("schoolday_reg")
         with SuppressStdoutStderr():
             model.fit(train_demand)
         pred_cv = model.predict(cv_demand)[["ds", "yhat"]]
@@ -97,6 +149,12 @@ def system_model_fit(
         name="weekday", period=1, fourier_order=9, condition_name="weekday"
     )
     model.add_seasonality(
+        name="schoolday",
+        period=1,
+        fourier_order=9,
+        condition_name="schoolday",
+    )
+    model.add_seasonality(
         name="sunday", period=1, fourier_order=7, condition_name="sunday"
     )
     model.add_seasonality(
@@ -105,6 +163,7 @@ def system_model_fit(
     model.add_seasonality(
         name="holiday", period=1, fourier_order=7, condition_name="holiday"
     )
+    model.add_regressor("schoolday_reg")
     model.fit(system_hourly_demand)
     fig_components = model.plot_components(model.predict())
     forecast = model.predict()
@@ -119,7 +178,9 @@ def system_model_fit(
     fig_forecast.set_size_inches(400, 8)
     forecast = pd.merge(
         forecast,
-        system_hourly_demand[["ds", "y", "weekday", "sunday", "saturday", "holiday"]],
+        system_hourly_demand[
+            ["ds", "y", "weekday", "sunday", "saturday", "holiday", "schoolday"]
+        ],
         how="left",
         on="ds",
         suffixes=["", "_mark"],

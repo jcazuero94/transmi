@@ -6,7 +6,7 @@ def prepare_hourly_system_model_app(
 ):
     """Prepare forecast_system for app vsualization"""
     # Dayly seasonalities
-    dayly_seasonalities = ["weekday", "saturday", "sunday", "holiday"]
+    dayly_seasonalities = ["weekday", "schoolday", "saturday", "sunday", "holiday"]
     dayly_seasonalities_df = None
     for col in dayly_seasonalities:
         aux_df = forecast_system[["ds", col]].iloc[: 180 * 24].copy()

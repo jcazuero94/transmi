@@ -39,8 +39,26 @@ def system_hourly_demand(validaciones_troncal_summary_clean: pd.DataFrame):
     for d in dates_to_impute:
         demand_summary.loc[d, "demand"] = 0
     demand_summary = demand_summary.sort_index().reset_index()
+    holidays_df = pd.DataFrame(
+        holidays.Colombia(years=list(range(2015, 2025))).items()
+    ).rename({0: "ds", 1: "holiday"}, axis=1)
+    holidays_df = pd.concat(
+        [
+            holidays_df,
+            pd.DataFrame(
+                [
+                    [x + pd.Timedelta(unit="D", value=1), "Holy saturday"]
+                    for x in holidays_df[
+                        holidays_df["holiday"] == "Viernes Santo [Good Friday]"
+                    ]["ds"]
+                ],
+                columns=holidays_df.columns,
+            ),
+        ],
+        ignore_index=True,
+    )
     demand_summary["holiday"] = demand_summary["date_hour"].apply(
-        lambda x: x.date() in holidays.Colombia()
+        lambda x: pd.Timestamp(x.date()) in list(holidays_df["ds"])
     )
     demand_summary["sunday"] = (
         demand_summary["date_hour"].apply(lambda x: x.weekday() == 6)

@@ -1,5 +1,6 @@
 import pandas as pd
 from typing import List
+import holidays
 
 
 def _chgs_from_base(chgs_base: List, start_chgs, end_chgs):
@@ -30,3 +31,62 @@ def _chgs_from_base(chgs_base: List, start_chgs, end_chgs):
             for j in range(1, num_chgs + 1)
         ]
     return chgs_res
+
+
+def _get_school_recess(year: int):
+    df = pd.DataFrame(
+        columns=["day"],
+        data=list(
+            pd.date_range(
+                pd.Timestamp(year=year, month=1, day=1),
+                pd.Timestamp(year=year, month=12, day=31),
+            )
+        ),
+    )
+    df["weekday"] = df["day"].apply(lambda x: x.weekday())
+    holidays_df = pd.DataFrame(holidays.Colombia(years=[year]).items())
+    school_rec = []
+    school_rec += [
+        (
+            pd.Timestamp(year=year, month=1, day=1),
+            df.loc[
+                (
+                    df[df["weekday"] == 4]["day"]
+                    - pd.Timestamp(year=year, month=1, day=21)
+                )
+                .apply(lambda x: abs(x.days))
+                .sort_values()
+                .index[0]
+            ]["day"],
+        )
+    ]
+    holy_thursday = pd.Timestamp(
+        holidays_df[holidays_df[1] == "Jueves Santo [Maundy Thursday]"].iloc[0, 0]
+    )
+    school_rec += [
+        (
+            holy_thursday - pd.Timedelta(value=3, unit="D"),
+            holy_thursday - pd.Timedelta(value=1, unit="D"),
+        )
+    ]
+    school_rec += [
+        (
+            (school_rec[1][0] + pd.Timedelta(value=10 * 7, unit="D")),
+            (school_rec[1][0] + pd.Timedelta(value=12 * 7 + 4, unit="D")),
+        )
+    ]
+    school_rec += [
+        (
+            df.loc[
+                (
+                    df[df["weekday"] == 0]["day"]
+                    - pd.Timestamp(year=year, month=11, day=25)
+                )
+                .apply(lambda x: abs(x.days))
+                .sort_values()
+                .index[0]
+            ]["day"],
+            pd.Timestamp(year=year, month=12, day=31),
+        )
+    ]
+    return school_rec
