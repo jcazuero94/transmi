@@ -11,6 +11,7 @@ from utilities import getMarks, unixTimeMillis
 import plotly.express as px
 from sklearn import metrics
 
+# TODO Correct Dayly to Daily
 
 # app
 app = dash.Dash(__name__)
@@ -51,6 +52,14 @@ DAY_OF_WEEK = {
     5: "Saturday",
     6: "Sunday",
 }
+MODEL_EXPLANATION = """
+    This model decomposes demand into trend, seasonalities, and holiday
+    and schoolday effects multiplicatively following this equation:
+
+    _PredictedDemand = Trend*(1+YearlySeasonality+WeeklySeasonality+DailySeasonality+HolidayEffect+SchooldayEffect)_
+
+    The estimation results for each component is shown below.
+"""
 # Kedro conection
 metadata = bootstrap_project(Path.cwd().parent)
 kedro_session = KedroSession.create(metadata.package_name, metadata.project_path)
@@ -95,7 +104,7 @@ app.layout = html.Div(
                         html.H2("Transmilenio demand", style={"padding-left": "10px"}),
                         html.H4(
                             "Hourly model including COVID impact",
-                            style={"padding-left": "10px"},
+                            style={"padding-left": "10px", "padding-top": "20px"},
                         ),
                     ],
                     className="ten columns",
@@ -207,6 +216,19 @@ app.layout = html.Div(
                         ),
                     ],
                     className="pretty_container four columns",
+                ),
+            ],
+            className="row",
+        ),
+        html.Div(
+            [
+                dcc.Markdown(
+                    MODEL_EXPLANATION,
+                    style={
+                        "padding-left": "20px",
+                        "padding-right": "20px",
+                        "font-size": 20,
+                    },
                 ),
             ],
             className="row",
