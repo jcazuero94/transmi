@@ -11,7 +11,7 @@ from utilities import getMarks, unixTimeMillis
 import plotly.express as px
 from sklearn import metrics
 
-# TODO Correct Dayly to Daily
+# TODO Correct Dayly to Dai ly
 
 # app
 app = dash.Dash(__name__)
