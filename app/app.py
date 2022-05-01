@@ -1,8 +1,6 @@
-from datetime import date
-from black import main
 import pandas as pd
 import dash
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 from dash import dcc, html, dash_table
 from kedro.framework.startup import bootstrap_project
 from pathlib import Path
@@ -387,7 +385,7 @@ def make_main_figure(station, checklist, date_range, demand_aggregation):
         lambda x: x if type(x) == str else int(round(x, -2))
     )
     mets.iloc[2, 1:] = mets.iloc[2, 1:].map(
-        lambda x: x if type(x) == str else int(round(x ** 0.5, -2))
+        lambda x: x if type(x) == str else int(round(x**0.5, -2))
     )
     figure_errors = px.scatter(main_fig_df, "Observed", "Modelled")
     figure_errors.update_layout(**LAYOUT_GRAPHS)
