@@ -1,6 +1,6 @@
 spark.driver.maxResultSize: 1g
 spark.scheduler.mode: FAIR
-spark.driver.memory: 2g
-spark.executor.memory: 1g
+spark.driver.memory: 4g
+spark.executor.memory: 2g
 spark.driver.extraJavaOptions: -XX:+UseG1GC
 spark.executor.extraJavaOptions:  -XX:+UseG1GC
