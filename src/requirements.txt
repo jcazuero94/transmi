@@ -18,3 +18,5 @@ holidays==0.13
 matplotlib==3.5.1
 cython==0.29.28
 kedro-viz==4.4.0
+kedro[Spark]
+kedro[Pandas]
