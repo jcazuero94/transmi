@@ -3,9 +3,10 @@
 ## Project setup
 The following instructions where tested in a MacOS Monterrey<br>
 To setup the project first creade conda enviroment and activate it<br>
-`conda create -n transmi python==3.8`<br>
+`conda create -n transmi python=3.8`<br>
 `conda activate transmi`<br>
 Then install kedro and its dependencies<br>
+`conda install hdf5`<br>
 `pip install -r src/requirements.lock`<br>
 `pip install pystan==2.19`<br>
 `pip install fbprophet`<br>
